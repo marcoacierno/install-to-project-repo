@@ -67,7 +67,7 @@ def maven_dependencies(parsing_results):
 
 
 def install(path, parsing):
-  os.system(
+  return os.system(
     "mvn install:install-file" + \
     " -Dfile=" + path + \
     " -DgroupId=" + parsing["group"] + \
@@ -222,8 +222,10 @@ if unparsable_files:
 parsings = [p for p in parsings if p[1] != None]
 
 for (path, parsing) in parsings:
-  install(path, parsing)
-  if options.delete:
+  success = install(path, parsing) == 0
+  
+  # remove the jar files only if the mvn command completed
+  if options.delete and success:
     os.remove(path)
 
 print maven_dependencies(parsings)
